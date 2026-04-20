@@ -17,13 +17,13 @@ type TitleBarProps = {
 
 const style: Record<Card["category"], JSX.CSSProperties> = {
 	Planeswalker: {
-		top: "3mm",
+		top: "2mm",
 		height: "4.4mm",
 		left: "4.5mm",
 		right: "4.6mm",
 	},
 	Regular: {
-		top: "4.5mm",
+		top: "3.5mm",
 		height: "4.9mm",
 		left: "4.7mm",
 		right: "4.6mm",
@@ -83,6 +83,8 @@ export default function TitleBar(p: TitleBarProps) {
 					"--chars": props.title.length + (coloredMana().length * 2) + (colorlessMana().length > 0 ? 2 : 0),
 					"font-size": `clamp(7pt, (200px) / var(--chars)*2, 10pt)`,
 					flex: 1,
+					color: "white",
+					"text-shadow": "-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000",
 				}}
 			>
 				{props.title}

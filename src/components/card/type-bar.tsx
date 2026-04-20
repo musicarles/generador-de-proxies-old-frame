@@ -8,14 +8,14 @@ type TypeBarProps = {
 
 const style: Record<Card["category"], JSX.CSSProperties> = {
 	Planeswalker: {
-		top: "49.4mm",
+		top: "48.4mm",
 		left: "4.7mm",
 		right: "4.6mm",
 		height: "4.3mm",
 		position: "absolute",
 	},
 	Regular: {
-		top: "49.6mm",
+		top: "48.6mm",
 		left: "4.7mm",
 		right: "4.6mm",
 		height: "5mm",
@@ -31,6 +31,9 @@ export default function TypeBar(props: TypeBarProps) {
 				position: "absolute",
 				"z-index": 2,
 				...style[props.category],
+				color: "white",
+				"text-shadow":
+					"-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000",
 			}}
 		>
 			<h1
@@ -41,6 +44,9 @@ export default function TypeBar(props: TypeBarProps) {
 					"--rows": props.type.length,
 					"font-size": `clamp(6pt, (200px) / var(--rows) * 2, 9pt)`,
 					flex: 1,
+					color: "white",
+					"text-shadow":
+						"-0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000",
 				}}
 			>
 				{props.type}

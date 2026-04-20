@@ -6,7 +6,8 @@ import {
 	isBiType,
 	ManaLetter,
 	manaLetters,
-	manaLetterToType as manaLetterToTypeMap, ManaType
+	manaLetterToType as manaLetterToTypeMap,
+	ManaType,
 } from "../types/mana";
 
 export function parseMana(manaCostString: string = ""): ManaType[] {
@@ -53,24 +54,41 @@ export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
 }
 
 function needScan(scryfallResult: any) {
-	return ['Stickers', 'Dungeon'].includes(scryfallResult['type_line']) || ['split', 'modal_dfc', 'adventure', 'planar', 'host', 'class', 'saga', 'flip'].includes(scryfallResult['layout'])
+	return (
+		["Stickers", "Dungeon"].includes(scryfallResult["type_line"]) ||
+		[
+			"split",
+			"modal_dfc",
+			"adventure",
+			"planar",
+			"host",
+			"class",
+			"saga",
+			"flip",
+		].includes(scryfallResult["layout"])
+	);
 }
 
-function getCardScanUrl(scryfallResult: any, { ifNecessary }: { ifNecessary: boolean }) {
+function getCardScanUrl(
+	scryfallResult: any,
+	{ ifNecessary }: { ifNecessary: boolean },
+) {
 	// Skip if not necessary
 	if (ifNecessary && !needScan(scryfallResult)) {
-		return undefined
+		return undefined;
 	}
 
-	let uris
+	let uris;
 
-	if ('image_uris' in scryfallResult) {
-		uris = scryfallResult['image_uris']
-	} else if ('card_faces' in scryfallResult) {
-		uris = scryfallResult['card_faces'].find((f: any) => 'image_uris' in f)?.['image_uris']
+	if ("image_uris" in scryfallResult) {
+		uris = scryfallResult["image_uris"];
+	} else if ("card_faces" in scryfallResult) {
+		uris = scryfallResult["card_faces"].find((f: any) => "image_uris" in f)?.[
+			"image_uris"
+		];
 	}
 
-	return uris['large'] ?? uris['normal'] ?? uris['small']
+	return uris["large"] ?? uris["normal"] ?? uris["small"];
 }
 
 export async function fetchCard(
@@ -83,37 +101,28 @@ export async function fetchCard(
 			`https://api.scryfall.com/cards/search/?q=((!"${title}" lang:${lang}) or ("${title}" t:token)) -t:card order:released direction:asc`,
 			{
 				headers: {
-					Origin: window.location.href
-				}
-			}
+					Origin: window.location.href,
+				},
+			},
 		).catch((e) => {
 			console.error(e);
-			throw new CardError(
-				title,
-				`not found for ${lang}`
-			);
+			throw new CardError(title, `not found for ${lang}`);
 		}),
 		fetch(
 			`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) -t:card order:released direction:asc`,
 			{
 				headers: {
-					Origin: window.location.href
-				}
-			}
+					Origin: window.location.href,
+				},
+			},
 		).catch((e) => {
 			console.error(e);
-			throw new CardError(
-				title,
-				'Not found'
-			);
+			throw new CardError(title, "Not found");
 		}),
 	]).then(([fr, en]) => Promise.all([fr.json(), en.json()]));
 
 	if (enCards.status == 404) {
-		throw new CardError(
-			title,
-			'Not found'
-		);
+		throw new CardError(title, "Not found");
 	}
 
 	if (frCards.status == 404) {
@@ -124,45 +133,49 @@ export async function fetchCard(
 	const en = enCards.data.find((c: any) => c.name.includes(title));
 
 	if (!fr || !en) {
-		throw new CardError(
-			title,
-			'Not found'
-		);
+		throw new CardError(title, "Not found");
 	}
 
 	const variants = await fetchVariants(en["name"]);
 
-	const biFaced = en['layout'] == 'transform' && 'card_faces' in en && en['card_faces'].length == 2
-	console.debug('biFaced', biFaced)
-	const frCardFaceInfo = biFaced ? fr['card_faces'][0] : fr
-	const enCardFaceInfo = biFaced ? en['card_faces'][0] : en
-	const frReverseFaceInfo = biFaced ? fr['card_faces'][1] : fr
-	const enReverseFaceInfo = biFaced ? en['card_faces'][1] : en
+	const biFaced =
+		en["layout"] == "transform" &&
+		"card_faces" in en &&
+		en["card_faces"].length == 2;
+	console.debug("biFaced", biFaced);
+	const frCardFaceInfo = biFaced ? fr["card_faces"][0] : fr;
+	const enCardFaceInfo = biFaced ? en["card_faces"][0] : en;
+	const frReverseFaceInfo = biFaced ? fr["card_faces"][1] : fr;
+	const enReverseFaceInfo = biFaced ? en["card_faces"][1] : en;
 
-	const colorsToUse: string[] = enCardFaceInfo["type_line"].toLowerCase().includes("land")
+	const colorsToUse: string[] = enCardFaceInfo["type_line"]
+		.toLowerCase()
+		.includes("land")
 		? frCardFaceInfo["color_identity"]
-		: frCardFaceInfo["colors"] ?? frCardFaceInfo["color_identity"];
+		: (frCardFaceInfo["colors"] ?? frCardFaceInfo["color_identity"]);
 
 	const manaTypes = colorsToUse.flatMap(manaLetterToType);
 
 	const manaCost = parseMana(enCardFaceInfo["mana_cost"]);
 
-	const overrideWithScanUrl = getCardScanUrl(frCardFaceInfo, { ifNecessary: true }) ?? getCardScanUrl(enCardFaceInfo, { ifNecessary: true })
+	const overrideWithScanUrl =
+		getCardScanUrl(frCardFaceInfo, { ifNecessary: true }) ??
+		getCardScanUrl(enCardFaceInfo, { ifNecessary: true });
 
-	console.debug('en', enCardFaceInfo)
-	console.debug('fr', frCardFaceInfo)
+	console.debug("en", enCardFaceInfo);
+	console.debug("fr", frCardFaceInfo);
 
 	const card: Card = {
 		title: frCardFaceInfo["printed_name"] || frCardFaceInfo["name"],
 		manaCost,
 		artUrl: enCardFaceInfo["image_uris"]?.["art_crop"],
+		artVariants: variants.map((v) => v.artUrl).filter(Boolean),
 		totalVariants: variants.length,
 		aspect: {
 			frame: parseCardFrame(enCardFaceInfo["type_line"]),
 			color: parseCardColor(
 				manaTypes,
-				enCardFaceInfo["type_line"].toLowerCase().includes("artifact") &&
-				!enCardFaceInfo["type_line"].toLowerCase().includes("vehicle"),
+				enCardFaceInfo["type_line"].toLowerCase().includes("artifact"),
 				manaCost
 					.filter((type) => type != "colorless" && type != "x")
 					.every(isBiType),
@@ -171,7 +184,11 @@ export async function fetchCard(
 				en["frame_effects"]?.includes("legendary") ||
 				enCardFaceInfo["type_line"].toLowerCase().includes("legendary"),
 		},
-		typeText: frCardFaceInfo["printed_type_line"] || frCardFaceInfo["type_line"] || enCardFaceInfo["printed_type_line"] || enCardFaceInfo["type_line"],
+		typeText:
+			frCardFaceInfo["printed_type_line"] ||
+			frCardFaceInfo["type_line"] ||
+			enCardFaceInfo["printed_type_line"] ||
+			enCardFaceInfo["type_line"],
 		oracleText: frCardFaceInfo["printed_text"] || frCardFaceInfo["oracle_text"],
 		flavorText: frCardFaceInfo["flavor_text"],
 		power: frCardFaceInfo["power"],
@@ -181,49 +198,52 @@ export async function fetchCard(
 		lang: fr["lang"],
 		rarity: fr["rarity"],
 		set: fr["set"],
-		category: enCardFaceInfo["type_line"].toLowerCase().includes("planeswalker")
-			? "Planeswalker"
-			: "Regular",
-		loyalty: enCardFaceInfo["loyalty"],
+		category: "Regular",
 		overrideWithScanUrl,
 	};
 
 	return {
-		verso: biFaced ? {
-			title: frReverseFaceInfo["printed_name"] || frReverseFaceInfo["name"],
-			manaCost,
-			artUrl: enReverseFaceInfo["image_uris"]?.["art_crop"],
-			totalVariants: variants.length,
-			aspect: {
-				frame: parseCardFrame(enReverseFaceInfo["type_line"]),
-				color: parseCardColor(
-					manaTypes,
-					enReverseFaceInfo["type_line"].toLowerCase().includes("artifact") &&
-					!enReverseFaceInfo["type_line"].toLowerCase().includes("vehicle"),
-					manaCost
-						.filter((type) => type != "colorless" && type != "x")
-						.every(isBiType),
-				),
-				legendary:
-					en["frame_effects"]?.includes("legendary") ||
-					enReverseFaceInfo["type_line"].toLowerCase().includes("legendary"),
-			},
-			typeText: frReverseFaceInfo["printed_type_line"] || frReverseFaceInfo["type_line"] || enReverseFaceInfo["printed_type_line"] || enReverseFaceInfo["type_line"],
-			oracleText: frReverseFaceInfo["printed_text"] || frReverseFaceInfo["oracle_text"],
-			flavorText: frReverseFaceInfo["flavor_text"],
-			power: frReverseFaceInfo["power"],
-			toughness: frReverseFaceInfo["toughness"],
-			artist: frReverseFaceInfo["artist"],
-			collectorNumber: fr["collector_number"],
-			lang: fr["lang"],
-			rarity: fr["rarity"],
-			set: fr["set"],
-			category: enReverseFaceInfo["type_line"].toLowerCase().includes("planeswalker")
-				? "Planeswalker"
-				: "Regular",
-			loyalty: enReverseFaceInfo["loyalty"],
-			overrideWithScanUrl,
-		} satisfies Card : "default",
+		verso: biFaced
+			? ({
+					title: frReverseFaceInfo["printed_name"] || frReverseFaceInfo["name"],
+					manaCost,
+					artUrl: enReverseFaceInfo["image_uris"]?.["art_crop"],
+					totalVariants: variants.length,
+					aspect: {
+						frame: parseCardFrame(enReverseFaceInfo["type_line"]),
+						color: parseCardColor(
+							manaTypes,
+							enReverseFaceInfo["type_line"].toLowerCase().includes("artifact"),
+							manaCost
+								.filter((type) => type != "colorless" && type != "x")
+								.every(isBiType),
+						),
+						legendary:
+							en["frame_effects"]?.includes("legendary") ||
+							enReverseFaceInfo["type_line"]
+								.toLowerCase()
+								.includes("legendary"),
+					},
+					typeText:
+						frReverseFaceInfo["printed_type_line"] ||
+						frReverseFaceInfo["type_line"] ||
+						enReverseFaceInfo["printed_type_line"] ||
+						enReverseFaceInfo["type_line"],
+					oracleText:
+						frReverseFaceInfo["printed_text"] ||
+						frReverseFaceInfo["oracle_text"],
+					flavorText: frReverseFaceInfo["flavor_text"],
+					power: frReverseFaceInfo["power"],
+					toughness: frReverseFaceInfo["toughness"],
+					artist: frReverseFaceInfo["artist"],
+					collectorNumber: fr["collector_number"],
+					lang: fr["lang"],
+					rarity: fr["rarity"],
+					set: fr["set"],
+					category: "Regular",
+					overrideWithScanUrl,
+				} satisfies Card)
+			: "default",
 		...card,
 		...variants[variant % variants.length],
 	} as Card;
@@ -234,10 +254,9 @@ export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
 		`https://api.scryfall.com/cards/search/?q=!"${title}" unique:art prefer:newest`,
 		{
 			headers: {
-				Origin: window.location.href
-			}
-		}
-
+				Origin: window.location.href,
+			},
+		},
 	).then((r) => r.json() as any);
 
 	return response.data
@@ -268,8 +287,7 @@ export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
 						frame: parseCardFrame(card["type_line"]),
 						color: parseCardColor(
 							manaTypes,
-							card["type_line"].toLowerCase().includes("artifact") &&
-							!card["type_line"].toLowerCase().includes("vehicle"),
+							card["type_line"].toLowerCase().includes("artifact"),
 							manaCost
 								.filter((type) => type != "colorless" && type != "x")
 								.every(isBiType),
@@ -293,9 +311,9 @@ export async function fetchCardType(name: string): Promise<string> {
 		`https://api.scryfall.com/cards/search/?q=!"${name}"`,
 		{
 			headers: {
-				Origin: window.location.href
-			}
-		}
+				Origin: window.location.href,
+			},
+		},
 	).then((r) => r.json() as any);
 
 	const [card] = response.data ?? [];

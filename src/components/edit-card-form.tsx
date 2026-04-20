@@ -50,7 +50,7 @@ export default function EditCardForm(props: {
 			{props.card().overrideWithScanUrl ? (
 				<div class="p-3">
 					<div class="alert alert-warning w-full">
-						This card is a scan, you can change its informations but it won't be visible.
+						Aquesta carta és un escàner, pots canviar la seva informació però no es veurà.
 					</div>
 				</div>
 			) : null}
@@ -60,13 +60,13 @@ export default function EditCardForm(props: {
 						class="btn btn-secondary flex-1"
 						onClick={() => props.onRemoveCard()}
 					>
-						Remove this card
+						Eliminar aquesta carta
 					</button>
 					<button
 						class="btn btn-secondary flex-1"
 						onClick={() => props.onDuplicateCard()}
 					>
-						Duplicate this card
+						Duplicar aquesta carta
 					</button>
 				</div>
 				<div class="flex overflow-x-hidden gap-3">
@@ -81,10 +81,10 @@ export default function EditCardForm(props: {
 			<section class="@container p-2 @xl:p-5 overflow-y-auto overflow-x-hidden">
 				<form class="flex flex-col gap-10">
 					<fieldset class="flex flex-col gap-5 p-3">
-						<legend class="text-white divider w-full">Aspect</legend>
+						<legend class="text-white divider w-full">Aspecte</legend>
 
 						<label class="form-control">
-							<span class="label-text text-white">Frame</span>
+							<span class="label-text text-white">Marc</span>
 							<select
 								name="frame"
 								value={props.card().aspect.frame}
@@ -105,26 +105,7 @@ export default function EditCardForm(props: {
 							</select>
 						</label>
 
-						<div class="form-control">
-							<label class="label cursor-pointer">
-								<input
-									name="legendary"
-									type="checkbox"
-									class="checkbox checkbox-primary"
-									checked={props.card().aspect.legendary}
-									onChange={(e) =>
-										props.setCard((p) => ({
-											...p,
-											aspect: {
-												...p.aspect,
-												legendary: e.currentTarget.checked as any,
-											},
-										}))
-									}
-								/>
-								<span class="mr-auto ml-5 text-white">Legendary</span>
-							</label>
-						</div>
+                    
 						<label class="form-control">
 							<span class="label-text text-white">Color</span>
 							<select
@@ -149,10 +130,10 @@ export default function EditCardForm(props: {
 					</fieldset>
 
 					<fieldset class="flex flex-col gap-5 p-3">
-						<legend class="text-white divider w-full">General Data</legend>
+						<legend class="text-white divider w-full">Dades generals</legend>
 
 						<label class="flex flex-col gap-1">
-							<span class="label-text text-white">Title</span>
+							<span class="label-text text-white">Títol</span>
 							<input
 								name="title"
 								class="input"
@@ -164,7 +145,7 @@ export default function EditCardForm(props: {
 						</label>
 
 						<label class="form-control">
-							<span class="label-text text-white">Mana cost</span>
+							<span class="label-text text-white">Cost de màgia</span>
 							<ManaInput
 								value={props.card().manaCost}
 								setValue={(m) => props.setCard((p) => ({ ...p, manaCost: m }))}
@@ -172,7 +153,7 @@ export default function EditCardForm(props: {
 						</label>
 
 						<label class="form-control gap-2">
-							<span class="label-text text-white">Picture URL</span>
+							<span class="label-text text-white">URL de la imatge</span>
 							<input
 								name="picture"
 								value={props.card().artUrl}
@@ -204,7 +185,7 @@ export default function EditCardForm(props: {
 						</label>
 
 						<label class="form-control">
-							<span class="label-text text-white">Type</span>
+							<span class="label-text text-white">Tipus</span>
 							<input
 								name="type"
 								class="input"
@@ -263,7 +244,7 @@ export default function EditCardForm(props: {
 
 						<div class="flex flex-wrap gap-5">
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Power</span>
+								<span class="label-text text-white">Força</span>
 								<input
 									name="type"
 									class="input"
@@ -278,7 +259,7 @@ export default function EditCardForm(props: {
 							</label>
 
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Toughness</span>
+								<span class="label-text text-white">Resistència</span>
 								<input
 									name="type"
 									class="input"
@@ -295,11 +276,11 @@ export default function EditCardForm(props: {
 					</fieldset>
 
 					<fieldset class="flex flex-col gap-5 p-3">
-						<legend class="text-white divider w-full">Print data</legend>
+						<legend class="text-white divider w-full">Dades d'impressió</legend>
 
 						<div class="flex flex-wrap gap-5">
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Collector Number</span>
+								<span class="label-text text-white">Número de col·leccionista</span>
 								<input
 									name="collector-number"
 									class="input"
@@ -314,7 +295,7 @@ export default function EditCardForm(props: {
 							</label>
 
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Rarity</span>
+								<span class="label-text text-white">Rareesa</span>
 								<input
 									name="rarity"
 									class="input"
@@ -331,7 +312,7 @@ export default function EditCardForm(props: {
 
 						<div class="flex flex-wrap gap-5">
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Set</span>
+								<span class="label-text text-white">Expansió</span>
 								<input
 									name="set"
 									class="input"
@@ -343,7 +324,7 @@ export default function EditCardForm(props: {
 							</label>
 
 							<label class="form-control flex-1 min-w-0">
-								<span class="label-text text-white">Language</span>
+								<span class="label-text text-white">Idioma</span>
 								<input
 									name="lang"
 									class="input"
@@ -359,7 +340,7 @@ export default function EditCardForm(props: {
 						</div>
 
 						<label class="form-control flex-1 min-w-0">
-							<span class="label-text text-white">Artist name</span>
+							<span class="label-text text-white">Nom de l'artista</span>
 							<input
 								name="artist"
 								class="input"
@@ -375,7 +356,7 @@ export default function EditCardForm(props: {
 					</fieldset>
 
 					<fieldset class="flex flex-col gap-5 p-3">
-						<legend class="text-white divider w-full">Back of card</legend>
+						<legend class="text-white divider w-full">Dors de la carta</legend>
 
 						<Show
 							when={
@@ -383,7 +364,7 @@ export default function EditCardForm(props: {
 							}
 						>
 							<label class="form-control gap-3">
-								<span class="label-text text-white">Picture URL</span>
+								<span class="label-text text-white">URL de la imatge</span>
 								<input
 									name="picture"
 									value={(props.card().verso ?? "") as string}
@@ -426,7 +407,7 @@ export default function EditCardForm(props: {
 										setDefaultVerso(url as string);
 									}}
 								>
-									Make this back the default one
+									Fer aquest dors el predeterminat
 								</button>
 							</label>
 						</Show>

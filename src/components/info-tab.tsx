@@ -2,24 +2,24 @@ export default function InfoTab() {
 	return (
 		<div class="flex flex-1 flex-col gap-2 mt-3 text-stone-200">
 			<p>
-				When printing, set your margins to "None" and your page scale to "100%".
-				(The app take care of size and margins)
+				Quan imprimiris,posa els marges a "Cap" i l'escala de la pàgina a "100%".
+				(L'aplicació s'encarrega de la mida i els marges)
 				<br />
-				Cards have a 1mm bleed, so you can safely cut them.
+				Les cartes tenen un sangrat de 1mm, així que pots tallar-les amb seguretat.
 			</p>
 			<p>
-				The search box supports all the{" "}
+				La caixa de cerca suporta tota la{" "}
 				<a
 					class="text-white font-bold hover:underline"
 					href="https://scryfall.com/docs/syntax"
 				>
-					Scryfall search syntax
+					sintaxi de cerca de Scryfall
 				</a>
-				. If you don't see a card in the list, it means it's not available on
-				Scryfall. (Tokens only exists in english, for example)
+				. Si no veus una carta a la llista, vol dir que no està disponible a
+				Scryfall. (Els tokens només existeixen en anglès, per exemple)
 			</p>
 			<div>
-				<span>See a bug ? Have a feature request ? </span>
+				<span>Veus un error? Tens una sol·licitud de funció? </span>
 
 				<ul class="h-10 mt-2 list-disc">
 					<li>
@@ -27,7 +27,7 @@ export default function InfoTab() {
 							href="https://github.com/QuentinWidlocher/mtg-proxy-maker"
 							class="font-bold hover:underline text-white"
 						>
-							Open an issue on GitHub
+							Obrir una incidència a GitHub
 						</a>
 					</li>
 					<li>
@@ -35,16 +35,16 @@ export default function InfoTab() {
 							href="mailto:quentin@widlocher.com"
 							class="font-bold hover:underline text-white"
 						>
-							Send me an email
+							Enviar-me un correu
 						</a>
 					</li>
 				</ul>
 			</div>
 			<p class="text-xs mt-auto text-stone-300">
-				The literal and graphical information presented on this site about
-				Magic: The Gathering, including card images, mana symbols, and Oracle
-				text, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro,
-				Inc. MTG Proxy Maker is not produced by or endorsed by Wizards of the
+				La informació literal i gràfica presentada en aquest lloc sobre
+				Magic: The Gathering, incloent imatges de cartes, symbols de màgia i text d'Oracle
+				és propietat intel·lectual de Wizards of the Coast, LLC, filial d'Hasbro,
+				Inc. MTG Proxy Maker no és prodüit ni recolzat per Wizards of the
 				Coast.
 			</p>{" "}
 		</div>

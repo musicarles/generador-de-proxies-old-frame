@@ -5,16 +5,14 @@ import {
 	isUnaryType,
 	ManaType,
 	UnaryManaType,
-	unaryToBiType
+	unaryToBiType,
 } from "./mana";
 
 export const cardFrames = [
-	"Vehicle",
 	"Basic Land",
-	"Creature",
 	"Nonbasic Land",
+	"Creature",
 	"Noncreature",
-	"Planeswalker",
 ] as const;
 
 export type CardFrame = (typeof cardFrames)[number];
@@ -38,7 +36,6 @@ export const cardBackgrounds = [
 	"WU",
 	"Gold",
 	"Land",
-	"Vehicle",
 ] as const;
 
 export type CardBackground = (typeof cardBackgrounds)[number];
@@ -52,8 +49,6 @@ export function parseCardFrame(engTypeText: string): CardFrame {
 		return "Basic Land";
 	} else if (lowercaseType.includes("land")) {
 		return "Nonbasic Land";
-	} else if (lowercaseType.includes("vehicle")) {
-		return "Vehicle";
 	} else if (
 		lowercaseType.includes("instant") ||
 		lowercaseType.includes("sorcery") ||
@@ -61,13 +56,8 @@ export function parseCardFrame(engTypeText: string): CardFrame {
 		lowercaseType.includes("artifact")
 	) {
 		return "Noncreature";
-	} else if (lowercaseType.includes("planeswalker")) {
-		return "Planeswalker";
 	} else {
-		throw new CardError(
-			engTypeText,
-			'Card type is not yet supported'
-		);
+		throw new CardError(engTypeText, "Card type is not yet supported");
 	}
 }
 
@@ -78,28 +68,7 @@ export const cardColors = [
 	"Red",
 	"White",
 	"Colorless",
-	"Artifact",
-	"Gold-3+",
-	"Gold-BG",
-	"Gold-BR",
-	"Gold-GU",
-	"Gold-GW",
-	"Gold-RG",
-	"Gold-RW",
-	"Gold-UB",
-	"Gold-UR",
-	"Gold-UW",
-	"Gold-WB",
-	"hybrid-BG",
-	"hybrid-BR",
-	"hybrid-GU",
-	"hybrid-GW",
-	"hybrid-RG",
-	"hybrid-RW",
-	"hybrid-UB",
-	"hybrid-UR",
-	"hybrid-UW",
-	"hybrid-WB",
+	"Multicolored",
 ] as const;
 
 export type CardColor = (typeof cardColors)[number];
@@ -117,7 +86,7 @@ export function parseCardColor(
 
 	switch (coloredMana.length) {
 		case 0:
-			return "Gold-3+";
+			return "Multicolored";
 		case 1:
 			if (isUnaryType(coloredMana[0])) {
 				return unaryManaToColor(coloredMana[0]);
@@ -131,15 +100,15 @@ export function parseCardColor(
 				});
 
 				if (result) {
-					return biManaToColor(result[0] as BiManaType, !bicolorManaOnly);
+					return "Multicolored";
 				} else {
-					return "Gold-3+";
+					return "Multicolored";
 				}
 			} else {
-				return "Gold-3+";
+				return "Multicolored";
 			}
 		default:
-			return "Gold-3+";
+			return "Multicolored";
 	}
 }
 
@@ -194,13 +163,10 @@ export function getBackgroundFromColor(
 	frame: CardFrame,
 ): CardBackground {
 	switch (frame) {
-		case "Vehicle":
-			return "Vehicle";
 		case "Nonbasic Land":
 		case "Basic Land":
 			return "Land";
 		case "Creature":
-		case "Planeswalker":
 		case "Noncreature": {
 			switch (color) {
 				case "Black":
@@ -214,40 +180,9 @@ export function getBackgroundFromColor(
 				case "White":
 					return "White";
 				case "Colorless":
-				case "Artifact":
 					return "Artifact";
-				case "Gold-3+":
-				case "Gold-GW":
-				case "Gold-RG":
-				case "Gold-BG":
-				case "Gold-RW":
-				case "Gold-BR":
-				case "Gold-GU":
-				case "Gold-UB":
-				case "Gold-UR":
-				case "Gold-UW":
-				case "Gold-WB":
+				case "Multicolored":
 					return "Gold";
-				case "hybrid-BG":
-					return "BG";
-				case "hybrid-BR":
-					return "BR";
-				case "hybrid-GU":
-					return "GU";
-				case "hybrid-GW":
-					return "GW";
-				case "hybrid-RG":
-					return "RG";
-				case "hybrid-RW":
-					return "RW";
-				case "hybrid-UB":
-					return "UB";
-				case "hybrid-UR":
-					return "UR";
-				case "hybrid-UW":
-					return "WU";
-				case "hybrid-WB":
-					return "WB";
 				default:
 					return "Artifact";
 			}
@@ -255,20 +190,68 @@ export function getBackgroundFromColor(
 	}
 }
 
-export function getFrameAndBackgroundFromAspect({
-	color,
-	frame,
-	legendary,
-}: Card["aspect"]) {
-	const fileName = `Frame=${frame}, Color=${color}, Legendary=${legendary ? "Yes" : "No"
-		}, Holo Stamp=Yes.svg`;
-
+export function getFrameAndBackgroundFromAspect(
+	{ color, frame, legendary }: Card["aspect"],
+	cardTitle?: string,
+) {
 	const background = getBackgroundFromColor(color, frame);
 
+	const isBasicLand = frame === "Basic Land";
+	const isNonbasicLand = frame === "Nonbasic Land";
+	const isLand = isBasicLand || isNonbasicLand;
+
+	let frameFile = "A"; // default
+
+	if (isNonbasicLand) {
+		frameFile = "LC";
+	} else if (isBasicLand && cardTitle) {
+		const titleLower = cardTitle.toLowerCase();
+		if (titleLower.includes("plains")) {
+			frameFile = "LW";
+		} else if (titleLower.includes("island")) {
+			frameFile = "LU";
+		} else if (titleLower.includes("swamp")) {
+			frameFile = "LB";
+		} else if (titleLower.includes("mountain")) {
+			frameFile = "LR";
+		} else if (titleLower.includes("forest")) {
+			frameFile = "LG";
+		} else {
+			frameFile = "LC";
+		}
+	} else if (isLand) {
+		frameFile = "LC";
+	} else {
+		const colorToFrame: Record<string, string> = {
+			White: "W",
+			Blue: "U",
+			Black: "B",
+			Green: "G",
+			Red: "R",
+			Colorless: "A",
+			Multicolored: "M",
+			"Gold-3+": "M",
+			"Gold-RG": "M",
+			"Gold-UR": "M",
+			"Gold-BR": "M",
+			"Gold-RW": "M",
+			"Gold-GW": "M",
+			"Gold-GU": "M",
+			"Gold-UB": "M",
+			"Gold-BG": "M",
+			"Gold-UW": "M",
+			"Gold-WB": "M",
+		};
+
+		frameFile = colorToFrame[color] ?? "A";
+	}
+
 	return {
-		frame: `${import.meta.env.VITE_PUBLIC_DIR ?? ""
-			}assets/images/card-frames/${fileName}`,
-		background: `${import.meta.env.VITE_PUBLIC_DIR ?? ""
-			}assets/images/card-backgrounds/${background}.png`,
+		frame: `${
+			import.meta.env.VITE_PUBLIC_DIR ?? ""
+		}../old-frame/${frameFile}.svg`,
+		background: `${
+			import.meta.env.VITE_PUBLIC_DIR ?? ""
+		}assets/images/card-backgrounds/${background}.png`,
 	};
 }

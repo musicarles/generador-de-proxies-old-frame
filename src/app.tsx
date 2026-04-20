@@ -1,8 +1,9 @@
 import {
 	createEffect,
 	createResource,
-	createSignal, For,
-	Show
+	createSignal,
+	For,
+	Show,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import CardComponent from "./components/card/card";
@@ -10,7 +11,7 @@ import CardVerso from "./components/card/card-verso";
 import EditCardForm from "./components/edit-card-form";
 import Sidebar from "./components/sidebar";
 import { parseMtgo } from "./services/mtgo-parser";
-import { fetchCard } from "./services/scryfall";
+import { fetchCard, fetchVariants } from "./services/scryfall";
 import { Card, getEmptyCard } from "./types/card";
 import { Toaster } from "solid-toast";
 import { CardError } from "./types/error";
@@ -85,7 +86,7 @@ export default function App() {
 			setCardList((prev) => [...prev, fetchedCard]);
 		} catch (e) {
 			if (e instanceof CardError) {
-				toastError(e)
+				toastError(e);
 			}
 		}
 	}
@@ -106,16 +107,18 @@ export default function App() {
 			),
 		);
 
-		console.debug('result', result)
+		console.debug("result", result);
 
-		for (const { reason } of result.filter(r => r.status == 'rejected')) {
+		for (const { reason } of result.filter((r) => r.status == "rejected")) {
 			if (reason instanceof CardError) {
-				console.error(reason)
+				console.error(reason);
 				toastError(reason);
 			}
 		}
 
-		return result.filter((result) => result.status == 'fulfilled').map((result) => (result as PromiseFulfilledResult<Card>).value)
+		return result
+			.filter((result) => result.status == "fulfilled")
+			.map((result) => (result as PromiseFulfilledResult<Card>).value);
 	}
 
 	async function getCardList(): Promise<Card[]> {
@@ -139,9 +142,42 @@ export default function App() {
 		localStorage.setItem("printVersos", printVersos() ? "true" : "false");
 	});
 
-	createEffect(function updateCardsLang() {
+	let previousLang = language();
+
+	createEffect(async function updateCardsLang() {
 		const lang = language();
-		setCardList((prev) => prev.map((c) => ({ ...c, language: lang })));
+		lang;
+		const currentList = cardList();
+
+		if (
+			previousLang &&
+			lang !== previousLang &&
+			currentList.state === "ready" &&
+			currentList().length > 0
+		) {
+			previousLang = lang;
+			const titles = currentList().map((c) => c.title);
+
+			const newCards: Card[] = [];
+			for (const title of titles) {
+				try {
+					const card = await fetchCard(title, lang, 0);
+					newCards.push(card);
+				} catch {
+					newCards.push({
+						...getEmptyCard(),
+						title: title,
+						aspect: {
+							frame: "Noncreature",
+							color: "Colorless",
+							legendary: false,
+						},
+						category: "Regular",
+					});
+				}
+			}
+			setCardList(newCards);
+		}
 	});
 
 	return (
@@ -176,16 +212,31 @@ export default function App() {
 											setSelectedCardIndex(j());
 										}}
 										selected={j() == selectedCardIndex()}
+										onVariantChange={async (variant) => {
+											const variants = card.artVariants;
+											if (!variants || variants.length === 0) return;
+											const newArtUrl = variants[variant];
+											if (!newArtUrl) return;
+											setCardList((prev) => {
+												const newList = [...prev];
+												newList[j()] = {
+													...newList[j()],
+													currentVariant: variant,
+													artUrl: newArtUrl,
+												};
+												return newList;
+											});
+										}}
 									/>
 									{j() % 9 == 8 && <div class="break-after-page" />}
 								</div>
 								{j() % 9 != 8 && j() == cardList().value.length - 1
 									? [...new Array(8 - (j() % 9))].map((_, i) => (
-										<div class="hidden print:block">
-											<CardVerso verso={undefined} />
-											{i == 7 - (j() % 9) && <div class="break-after-page" />}
-										</div>
-									))
+											<div class="hidden print:block">
+												<CardVerso verso={undefined} />
+												{i == 7 - (j() % 9) && <div class="break-after-page" />}
+											</div>
+										))
 									: null}
 
 								{printVersos() &&
@@ -255,7 +306,7 @@ export default function App() {
 							"box-sizing": "content-box",
 						}}
 					>
-						Create a custom card
+						Crear una carta personalitzada
 					</button>
 				</div>
 			</div>

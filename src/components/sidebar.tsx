@@ -99,7 +99,7 @@ export default function Sidebar(props: SidebarProps) {
 			<aside class="h-full shadow-xl overflow-y-hidden print:hidden w-full bg-stone-500">
 				<div class="flex flex-col h-full gap-5 p-5">
 					<label class="form-control">
-						<div class="label-text text-white">Card language</div>
+						<div class="label-text text-white">Idioma de la carta</div>
 						<select
 							name="language"
 							value={props.language}
@@ -128,14 +128,14 @@ export default function Sidebar(props: SidebarProps) {
 						class="btn btn-secondary w-full"
 						onClick={() => setRawCardListDialogOpen(true)}
 					>
-						Import from MTGO
+						Importar de MTGO
 					</button>
 					<button
 						type="button"
 						class="btn btn-secondary w-full"
 						onClick={() => props.onClearList()}
 					>
-						Clear list
+						Buidar llista
 					</button>
 					<button
 						type="button"
@@ -144,13 +144,13 @@ export default function Sidebar(props: SidebarProps) {
 							print();
 						}}
 					>
-						Print all cards
+						Imprimir totes les cartes
 					</button>
 
 					<div class="form-control">
 						<label class="label cursor-pointer">
 							<span class="label-text ml-auto mr-5 text-white">
-								Print card backs
+								Imprimir dors de les cartes
 							</span>
 							<input
 								name="print-versos"
@@ -184,8 +184,8 @@ export default function Sidebar(props: SidebarProps) {
 					}}
 				>
 					<label for="cardList" class="label-text text-white">
-						Paste your card list here <br />
-						Unsupported cards will be skipped.
+						Enganxa la teva llista de cartes aquí <br />
+						Les cartes no suportades s'ignoraran.
 					</label>
 					<textarea name="cardList" class="textarea h-full" rows={12} placeholder={deckExample} />
 
@@ -196,9 +196,9 @@ export default function Sidebar(props: SidebarProps) {
 								type="reset"
 								onClick={() => setRawCardListDialogOpen(false)}
 							>
-								Cancel
+								Cancel·lar
 							</button>
-							<button type="submit" class="btn btn-primary flex-1">Submit</button>
+							<button type="submit" class="btn btn-primary flex-1">Confirmar</button>
 						</div>
 					</div>
 				</form>

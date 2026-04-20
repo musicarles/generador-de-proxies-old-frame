@@ -28,7 +28,7 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 				<input
 					class="input flex-1 join-item"
 					type="search"
-					placeholder="Search a card..."
+					placeholder="Buscar una carta..."
 					name="search"
 					autocomplete="mtg"
 				/>
@@ -54,7 +54,7 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 								<option
 									selected
 									disabled
-									label={`${results()!.length} result${results()!.length > 1 ? "s" : ""
+									label={`${results()!.length} resultat${results()!.length > 1 ? "s" : ""
 										}`}
 								/>
 								{results()!.map((result) => (
@@ -67,13 +67,13 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 						),
 					)
 					.with("pending", "refreshing", () => (
-						<option selected disabled label="Searching..." />
+						<option selected disabled label="Buscant..." />
 					))
 					.with("errored", () => (
 						<option selected disabled label={results.error} />
 					))
 					.otherwise(() => (
-						<option selected disabled label="...and select it" />
+						<option selected disabled label="...i selecciona-la" />
 					))}
 			</select>
 		</div>

@@ -4,6 +4,7 @@ import { ManaType } from "./mana";
 export type Card = {
 	overrideWithScanUrl?: string;
 	artUrl: string;
+	artVariants?: string[];
 	artist?: string;
 	aspect: { frame: CardFrame; color: CardColor; legendary: boolean };
 	collectorNumber?: string;
@@ -16,23 +17,18 @@ export type Card = {
 	set?: string;
 	title: string;
 	totalVariants: number;
+	currentVariant?: number;
 	toughness?: string;
 	typeText: string;
 	verso?: "default" | string | Card;
-} & (
-		| {
-			category: "Regular";
-		}
-		| {
-			category: "Planeswalker";
-			loyalty: string;
-		}
-	);
+	category: "Regular";
+};
 
 export function getEmptyCard(): Card {
 	return {
 		artUrl: "",
 		totalVariants: 0,
+		currentVariant: 0,
 		flavorText: "",
 		manaCost: [],
 		oracleText: "",
@@ -40,9 +36,10 @@ export function getEmptyCard(): Card {
 		typeText: "",
 		aspect: {
 			frame: "Noncreature",
-			color: "Artifact",
+			color: "Colorless",
 			legendary: false,
 		},
 		category: "Regular",
+		lang: "en",
 	};
 }

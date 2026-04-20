@@ -12,14 +12,14 @@ type MetadataProps = {
 export default function Metadata(props: MetadataProps) {
 	return (
 		<div
-			style={{
-				display: "flex",
-				"flex-direction": "column",
-				bottom: "1.7mm",
-				height: "4mm",
-				left: "4.3mm",
-				right: "4.2mm",
-				position: "absolute",
+style={{
+			display: "flex",
+			"flex-direction": "column",
+			bottom: "0.7mm",
+			height: "4mm",
+			left: "4.3mm",
+			right: "4.2mm",
+			position: "absolute",
 				color: "white",
 				"font-family": "Prompt",
 				"font-size": "4.5pt",
