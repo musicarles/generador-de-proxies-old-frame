@@ -242,7 +242,7 @@ export function getFrameAndBackgroundFromAspect(
 	return {
 		frame: `${
 			import.meta.env.VITE_PUBLIC_DIR ?? ""
-		}../old-frame/${frameFile}.svg`,
+		}assets/old-frame/${frameFile}.svg`,
 		background: `${
 			import.meta.env.VITE_PUBLIC_DIR ?? ""
 		}assets/images/card-backgrounds/${background}.png`,
