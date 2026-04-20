@@ -204,23 +204,16 @@ export function getFrameAndBackgroundFromAspect(
 
 	if (isNonbasicLand) {
 		frameFile = "LC";
-	} else if (isBasicLand && cardTitle) {
-		const titleLower = cardTitle.toLowerCase();
-		if (titleLower.includes("plains")) {
-			frameFile = "LW";
-		} else if (titleLower.includes("island")) {
-			frameFile = "LU";
-		} else if (titleLower.includes("swamp")) {
-			frameFile = "LB";
-		} else if (titleLower.includes("mountain")) {
-			frameFile = "LR";
-		} else if (titleLower.includes("forest")) {
-			frameFile = "LG";
-		} else {
-			frameFile = "LC";
-		}
-	} else if (isLand) {
-		frameFile = "LC";
+	} else if (isBasicLand) {
+		const colorToBasicFrame: Record<string, string> = {
+			White: "LW",
+			Blue: "LU",
+			Black: "LB",
+			Red: "LR",
+			Green: "LG",
+			Colorless: "LC",
+		};
+		frameFile = colorToBasicFrame[color] ?? "LC";
 	} else {
 		const colorToFrame: Record<string, string> = {
 			White: "W",
