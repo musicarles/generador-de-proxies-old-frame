@@ -1,31 +1,43 @@
-# MTG Proxy Maker
+# MTG Proxy Maker - Old Frame
 
-This app enables the creation of very high resolution Magic proxy cards, without relying on scan quality
+Generador de proxies d'alta qualitat amb **old frame** per a Premodern i Old School.
 
-## What can it do ?
+Adaptació del [projecte original](https://github.com/QuentinWidlocher/mtg-proxy-maker) optimitzada per a formats antics de Magic: The Gathering.
 
-- Parse card list in MTGO format
-- Search Scryfall for card with name
-- Creates high resolution of cards, even non-english one
-- Generates a different artwork for each basic land you want to generate (it's nicer imo)
-- Edit or create cards (including backs)
+## Funcionalitats
 
-## What can't it do ?
+- Cercar cartes per nom a Scryfall
+- Importar llistes en format MTGO
+- Suport multilingüe (10 idiomes)
+- Frame antic (old frame) per a totes les cartes
+- Basic Lands: Plains (LW), Island (LU), Swamp (LB), Mountain (LR), Forest (LG)
+- Crear i editar cartes personalitzades
+- Imprimir amb mida estàndard (63mm x 88mm)
 
-- All non-basic cards (only Planeswalker, but not Saga, Split, Flip, Adventures etc.)
-- Adjust printing variables (but you can play around with CSS variables inside the html if you want)
+## Com fer servir
 
-## Usage
+1. Obrir l'aplicació
+2. Seleccionar l'idioma de les cartes
+3. Cercar cartes o importar llista MTGO
+4. Imprimir: margins a "Cap" i escala a "100%"
 
-- Open the app on your device
-- Select the language you want to use for you cards
-- Search for cards or click "Import from MTGO" and paste you card list
-- Whatever your OS, always set the printing margins to none and you scale to 100% and you should be good
+## Diferències amb l'original
 
-## Why another tool ?
+- Només 4 tipus de frame: Basic Land, Nonbasic Land, Creature, Noncreature
+- 7 colors: Black, Blue, Green, Red, White, Colorless, Multicolored
+- Frames antics (LW, LU, LB, LR, LG, LC)
+- Codi netificat (~140 fitxers vs 200+)
+- Sense PWA, sense Firebase
 
-Contrary to other tools, this one doesn't rely on scans for the proxies but instead re-creates them based on the card info.
+## Desplegar
 
-I made it because I'm french and french scans of MTG cards are often awful.  
+```bash
+pnpm install
+pnpm build
+# El resultat a dist/ es pot penjar a qualsevol hosting
+```
 
-With this tool I can get very high resolution of cards in vector format, perfect for printing with personal printer ! (the results are very convincing so far)
+## Llicència
+
+La informació gràfica i textual de Magic: The Gathering és propietat de Wizards of the Coast.
+Aquesta eina no és produïda ni recolzada per Wizards of the Coast.
