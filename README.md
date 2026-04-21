@@ -10,7 +10,6 @@ Adaptació del [projecte original](https://github.com/QuentinWidlocher/mtg-proxy
 - Importar llistes en format MTGO
 - Suport multilingüe (10 idiomes)
 - Frame antic (old frame) per a totes les cartes
-- Basic Lands: Plains (LW), Island (LU), Swamp (LB), Mountain (LR), Forest (LG)
 - Crear i editar cartes personalitzades
 - Imprimir amb mida estàndard (63mm x 88mm)
 
@@ -25,7 +24,6 @@ Adaptació del [projecte original](https://github.com/QuentinWidlocher/mtg-proxy
 
 - Només 4 tipus de frame: Basic Land, Nonbasic Land, Creature, Noncreature
 - 7 colors: Black, Blue, Green, Red, White, Colorless, Multicolored
-- Frames antics (LW, LU, LB, LR, LG, LC)
 - Codi netificat (~140 fitxers vs 200+)
 - Sense PWA, sense Firebase
 
